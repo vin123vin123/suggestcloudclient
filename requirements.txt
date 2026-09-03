@@ -1,0 +1,4 @@
+Flask==3.0.3
+pymongo[srv]==4.8.0
+cloudinary==1.41.0
+gunicorn==23.0.0
