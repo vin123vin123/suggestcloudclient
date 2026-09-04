@@ -5,8 +5,19 @@ import cloudinary
 import cloudinary.uploader
 
 app = Flask(__name__)
-app = Flask(__name__)
 
+
+
+
+# Cloudinary automatically configures itself when CLOUDINARY_URL environment variable is set
+# MongoDB Setup
+MONGO_URI = os.getenv("MONGO_URI")
+try:
+    client = MongoClient(MONGO_URI)
+    db = client['toy_db']
+    toys_collection = db['toys']
+except Exception as e:
+    print(f"Database Connection Error: {e}")
 # 🟢 ADD THIS ROOT PATH SO THE MAIN HOMEPAGE WORKS
 @app.route('/', methods=['GET'])
 def homepage_status():
@@ -20,16 +31,6 @@ def homepage_status():
 def get_toys():
     # ... rest of your code
 
-
-# Cloudinary automatically configures itself when CLOUDINARY_URL environment variable is set
-# MongoDB Setup
-MONGO_URI = os.getenv("MONGO_URI")
-try:
-    client = MongoClient(MONGO_URI)
-    db = client['toy_db']
-    toys_collection = db['toys']
-except Exception as e:
-    print(f"Database Connection Error: {e}")
 
 # Endpoint for your Tkinter client to get all toys
 @app.route('/api/toys', methods=['GET'])
