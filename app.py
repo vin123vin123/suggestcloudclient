@@ -27,9 +27,8 @@ def homepage_status():
     }), 200
 
 # Your existing routes remain below this line...
-@app.route('/api/toys', methods=['GET'])
-def get_toys():
-    # ... rest of your code
+#app.route('/api/toys', methods=['GET'])
+
 
 
 # Endpoint for your Tkinter client to get all toys
