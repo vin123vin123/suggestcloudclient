@@ -12,6 +12,7 @@ app = Flask(__name__)
 # Cloudinary automatically configures itself when CLOUDINARY_URL environment variable is set
 # MongoDB Setup
 MONGO_URI = os.getenv("MONGO_URI")
+CLOUDINARY_URL = os.environ.get("CLOUDINARY_URL")
 try:
     client = MongoClient(MONGO_URI)
     db = client['toy_db']
