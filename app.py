@@ -5,6 +5,21 @@ import cloudinary
 import cloudinary.uploader
 
 app = Flask(__name__)
+app = Flask(__name__)
+
+# 🟢 ADD THIS ROOT PATH SO THE MAIN HOMEPAGE WORKS
+@app.route('/', methods=['GET'])
+def homepage_status():
+    return jsonify({
+        "status": "online",
+        "message": "Toy Store Backend API is working perfectly!"
+    }), 200
+
+# Your existing routes remain below this line...
+@app.route('/api/toys', methods=['GET'])
+def get_toys():
+    # ... rest of your code
+
 
 # Cloudinary automatically configures itself when CLOUDINARY_URL environment variable is set
 # MongoDB Setup
