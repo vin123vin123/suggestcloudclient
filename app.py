@@ -85,7 +85,14 @@ def add_toy():
         print("💥 --------------------------------- 💥\n")
         return f"Application Error: {str(e)}", 500
 
-    return redirect(url_for('home'))
+            # Delete: return redirect(url_for('home'))
+        # Replace with this:
+        return jsonify({
+            "status": "success",
+            "message": "Toy updated successfully!",
+            "image_url": secure_url
+        }), 200
+
 
 
      
