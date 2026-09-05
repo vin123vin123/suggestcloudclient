@@ -43,7 +43,7 @@ def get_toys():
     except Exception as e:
         return jsonify({"error": f"Database retrieval error: {str(e)}"}), 500
     
- @app.route('/add-toy', methods=['POST'])
+@app.route('/add-toy', methods=['POST'])
  def add_toy():
     name = request.form.get('name')
     price = request.form.get('price')
