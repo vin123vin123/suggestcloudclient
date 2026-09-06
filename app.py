@@ -20,6 +20,15 @@ try:
     client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
     db = client['toy_db']
     toys_collection = db['toys']
+    new_toy = {
+            "name": 'name',
+            "price": '0.0',
+            "description": 'description',
+            "image_url": 'image_url'
+        }
+
+        # STEP 4: Insert the record into your collection
+    toys_collection.insert_one(new_toy)
     # Trigger a fast query request to force link verification on startup
     client.server_info() 
 except Exception as e:
