@@ -4,55 +4,53 @@ from pymongo import MongoClient
 import cloudinary
 import cloudinary.uploader
 
-
 app = Flask(__name__)
 
 MONGO_URI = os.environ.get("MONGO_URI")
-CLOUDINARY_ENV_URL = os.environ.get("CLOUDINARY_URL")
+CLOUDINARY_URL = os.environ.get("CLOUDINARY_URL")
 
-if not MONGO_URI or not CLOUDINARY_ENV_URL:
-    print("❌ CRITICAL ERROR: Environment keys are completely missing from the Render dashboard configuration settings!")
-else:
-    # 🔧 FORCE EXPLICIT CLOUDINARY CONFIGURATION
+# Global variables to track connection status
+db_connected = False
+toys_collection = None
+
+# Initialize Cloudinary safely
+if CLOUDINARY_URL:
     try:
-        cloudinary.config(CLOUDINARY_ENV_URL=os.environ.get("CLOUDINARY_URL"))
-        print("☁️ Cloudinary configuration initialized successfully.")
+        cloudinary.config(cloudinary_url=CLOUDINARY_URL)
+        print("☁️ Cloudinary configuration initialized.")
     except Exception as e:
-        print(f"❌ Cloudinary Configuration Error: {str(e)}")
+        print(f"❌ Cloudinary Config Error: {str(e)}")
 
-
-
-
-# MongoDB Connection Pipeline Setup
-try:
-    # Adding a 5-second timeout avoids hanging server requests if the database connection drops.
-    client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
-    db = client['toy_db']
-    toys_collection = db['toys']
-    new_toy = {
-            "name": 'name',
-            "price": '0.0',
-            "description": 'description',
-            "image_url": 'image_url'
-        }
-
-        # STEP 4: Insert the record into your collection
-    toys_collection.insert_one(new_toy)
-    # Trigger a fast query request to force link verification on startup
-    client.server_info() 
-except Exception as e:
-    print(f"❌ Database Connection Crash: {str(e)}")
-
+# Initialize MongoDB safely
+if MONGO_URI:
+    try:
+        # 5-second timeout prevents the server from hanging indefinitely
+        client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
+        db = client['toy_db']
+        toys_collection = db['toys']
+        
+        # Test connection immediately
+        client.server_info() 
+        db_connected = True
+        print("💾 MongoDB Connected Successfully!")
+    except Exception as e:
+        print(f"❌ Database Connection Crash: {str(e)}")
+else:
+    print("❌ CRITICAL ERROR: MONGO_URI environment variable is missing!")
 
 @app.route('/', methods=['GET'])
 def health_check():
+    # Fixed: This will no longer crash even if DB connection failed
     return jsonify({
         "status": "online", 
-        "database_connected": MONGO_URI is not None,
+        "database_connected": db_connected,
         "cloudinary_connected": CLOUDINARY_URL is not None
     }), 200
+
 @app.route('/api/toys', methods=['GET'])
 def get_toys():
+    if not db_connected or toys_collection is None:
+        return jsonify({"error": "Database is unavailable"}), 503
     try:
         all_toys = list(toys_collection.find({}))
         for toy in all_toys:
@@ -60,6 +58,7 @@ def get_toys():
         return jsonify(all_toys), 200
     except Exception as e:
         return jsonify({"error": f"Database retrieval error: {str(e)}"}), 500
+
 @app.route('/add-toy', methods=['POST'])
 def add_toy():
     name = request.form.get('name')
