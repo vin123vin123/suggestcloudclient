@@ -91,7 +91,7 @@ def add_toy():
             "status": "success",
             "message": "Toy updated successfully!",
             "image_url": secure_url
-        }), 200
+        }), 201
 
 
 
