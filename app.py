@@ -3,16 +3,29 @@ from flask import Flask, request, jsonify
 from pymongo import MongoClient
 import cloudinary
 import cloudinary.uploader
+import os
+from flask import Flask, request, jsonify
+from pymongo import MongoClient
+import cloudinary
+import cloudinary.uploader
 
 app = Flask(__name__)
 
-# --- SERVER SIDE RECOVERY TRAP ---
-# Instead of failing silently with a 500 error, this provides a clear message if variables are missing.
 MONGO_URI = os.environ.get("MONGO_URI")
-CLOUDINARY_URL = os.environ.get("CLOUDINARY_URL")
+CLOUDINARY_ENV_URL = os.environ.get("CLOUDINARY_URL")
 
-if not MONGO_URI or not CLOUDINARY_URL:
+if not MONGO_URI or not CLOUDINARY_ENV_URL:
     print("❌ CRITICAL ERROR: Environment keys are completely missing from the Render dashboard configuration settings!")
+else:
+    # 🔧 FORCE EXPLICIT CLOUDINARY CONFIGURATION
+    try:
+        cloudinary.config(cloudinary_url=CLOUDINARY_ENV_URL)
+        print("☁️ Cloudinary configuration initialized successfully.")
+    except Exception as e:
+        print(f"❌ Cloudinary Configuration Error: {str(e)}")
+
+
+
 
 # MongoDB Connection Pipeline Setup
 try:
