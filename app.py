@@ -19,7 +19,7 @@ if not MONGO_URI or not CLOUDINARY_ENV_URL:
 else:
     # 🔧 FORCE EXPLICIT CLOUDINARY CONFIGURATION
     try:
-        cloudinary.config(cloudinary_url=CLOUDINARY_ENV_URL)
+        cloudinary.config(CLOUDINARY_ENV_URL=os.environ.get("CLOUDINARY_URL")
         print("☁️ Cloudinary configuration initialized successfully.")
     except Exception as e:
         print(f"❌ Cloudinary Configuration Error: {str(e)}")
