@@ -3,11 +3,7 @@ from flask import Flask, request, jsonify
 from pymongo import MongoClient
 import cloudinary
 import cloudinary.uploader
-import os
-from flask import Flask, request, jsonify
-from pymongo import MongoClient
-import cloudinary
-import cloudinary.uploader
+
 
 app = Flask(__name__)
 
@@ -19,7 +15,7 @@ if not MONGO_URI or not CLOUDINARY_ENV_URL:
 else:
     # 🔧 FORCE EXPLICIT CLOUDINARY CONFIGURATION
     try:
-        cloudinary.config(CLOUDINARY_ENV_URL=os.environ.get("CLOUDINARY_URL")
+        cloudinary.config(CLOUDINARY_ENV_URL=os.environ.get("CLOUDINARY_URL"))
         print("☁️ Cloudinary configuration initialized successfully.")
     except Exception as e:
         print(f"❌ Cloudinary Configuration Error: {str(e)}")
